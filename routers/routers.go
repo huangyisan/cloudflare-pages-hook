@@ -147,7 +147,7 @@ func filterDeploymentsByCommit(r DeploymentsResponse, commitHash string, branch 
 	var f filterDeploymentsResponse
 	for _, v := range r.Result {
 		if v.DeploymentTrigger.Metadata.CommitHash == commitHash && v.DeploymentTrigger.Metadata.Branch == branch {
-			ShortCommitMsg := string([]byte(v.DeploymentTrigger.Metadata.CommitHash))[:6]
+			ShortCommitMsg := string([]byte(v.DeploymentTrigger.Metadata.CommitHash))[:7]
 			f.ProjectName = v.ProjectName
 			f.Environment = v.Environment
 			f.Branch = branch
