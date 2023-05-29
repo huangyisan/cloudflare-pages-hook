@@ -66,7 +66,7 @@ func deploymentsHook(c *gin.Context) {
 	if project == "" || commitHash == "" || branch == "" {
 		response.Fail(c, gin.H{}, "should provide \"id\" and \"commitHash\" args")
 	} else {
-		text := fmt.Sprintf("✈️A new build is on fly✈️\n\n"+
+		text := fmt.Sprintf("✈️A new build is on the fly✈️\n\n"+
 			"Project: *%s*\n"+
 			"CommitHash: *%s*\n"+
 			"Branch: *%s*", project, commitHash, branch)
