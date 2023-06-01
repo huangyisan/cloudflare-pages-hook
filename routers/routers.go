@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	CFScanWaitTime = 5 * time.Minute
+	CFScanWaitTime = 2 * time.Minute
 	CFPerPage      = "5"
 	CFPage         = "1"
 )
@@ -66,19 +66,19 @@ func deploymentsHook(c *gin.Context) {
 	if project == "" || commitHash == "" || branch == "" {
 		response.Fail(c, gin.H{}, "should provide \"id\" and \"commitHash\" args")
 	} else {
-		text := fmt.Sprintf("✈️A new build is on the fly✈️\n\n"+
-			"Project: *%s*\n"+
-			"CommitHash: *%s*\n"+
-			"Branch: *%s*", project, commitHash, branch)
+		//text := fmt.Sprintf("✈️A new build is on the fly✈️\n\n"+
+		//	"Project: *%s*\n"+
+		//	"CommitHash: *%s*\n"+
+		//	"Branch: *%s*", project, commitHash, branch)
+		//
+		//err := deploymentSendTG(text)
+		//if err != nil {
+		//	log.Println(err.Error())
+		//	response.Fail(c, gin.H{}, err.Error())
+		//	return
+		//}
 
-		err := deploymentSendTG(text)
-		if err != nil {
-			log.Println(err.Error())
-			response.Fail(c, gin.H{}, err.Error())
-			return
-		}
-
-		response.Fail(c, gin.H{}, "api success")
+		response.Success(c, gin.H{}, "api success")
 
 		go func(project, commitHash, branch string) {
 			time.Sleep(CFScanWaitTime)
@@ -92,7 +92,7 @@ func deploymentsHook(c *gin.Context) {
 			if err != nil {
 				response.Fail(c, gin.H{}, err.Error())
 			}
-			text = fmt.Sprintf("👇CF Pages deploy result:👇\n\n"+
+			text := fmt.Sprintf("👇CF Pages deploy result:👇\n\n"+
 				"Project: *%s*\n"+
 				"Env: *%s*\n"+
 				"Branch: *%s*\n"+
