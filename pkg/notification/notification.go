@@ -1,17 +1,19 @@
 package notification
 
+var N INotification
+
 type INotification interface {
 	send(string) bool
 }
 
-type notifier struct {
+type Notifier struct {
 	notification INotification
 }
 
-func (n *notifier) setNotification(notification INotification) {
+func (n *Notifier) SetNotification(notification INotification) {
 	n.notification = notification
 }
 
-func (n *notifier) send(msg string) bool {
+func (n *Notifier) Send(msg string) bool {
 	return n.notification.send(msg)
 }

@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"cloudflare-pages-hook/common"
+	"cloudflare-pages-hook/pkg/notification"
 	"cloudflare-pages-hook/response"
 	"encoding/json"
 	"fmt"
@@ -169,12 +169,9 @@ func filterDeploymentsByCommit(r DeploymentsResponse, commitHash string, branch 
 }
 
 func deploymentSendTG(text string) error {
-	botToken := os.Getenv("CHEEMS_BOT_TOKEN")
-	chatID := os.Getenv("CHEEMS_CHAT_ID")
-	err := common.SendTG(text, botToken, chatID)
-	if err != nil {
-		return err
-	}
+	var n notification.Notifier
+	n.SetNotification(notification.N)
+	n.Send(text)
 	return nil
 }
 
