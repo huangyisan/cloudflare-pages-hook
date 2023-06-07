@@ -1,15 +1,13 @@
 package routers
 
 import (
+	"cloudflare-pages-hook/common"
 	"cloudflare-pages-hook/pkg/notification"
 	"cloudflare-pages-hook/response"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"io"
 	"log"
-	"net/http"
-	"net/url"
 	"os"
 	"time"
 )
@@ -71,7 +69,7 @@ func deploymentsHook(c *gin.Context) {
 		//	"CommitHash: *%s*\n"+
 		//	"Branch: *%s*", project, commitHash, branch)
 		//
-		//err := deploymentSendTG(text)
+		//err := deploymentNotice(text)
 		//if err != nil {
 		//	log.Println(err.Error())
 		//	response.Fail(c, gin.H{}, err.Error())
@@ -111,7 +109,7 @@ func deploymentsHook(c *gin.Context) {
 				f.CommitMsg,
 				f.Status,
 			)
-			deploymentSendTG(text)
+			deploymentNotice(text)
 			log.Printf("%v", f)
 		}(project, commitHash, branch)
 	}
@@ -119,27 +117,21 @@ func deploymentsHook(c *gin.Context) {
 
 func makeDeploymentsRequest(project string) (DeploymentsResponse, error) {
 	_url := fmt.Sprintf("https://api.cloudflare.com/client/v4/accounts/%s/pages/projects/%s/deployments", os.Getenv("CHEEMS_CF_ACCOUNT_ID"), project)
-	params := url.Values{}
-	Url, _ := url.Parse(_url)
-	params.Set("sort_by", "created_on")
-	params.Set("sort_order", "desc")
-	params.Set("per_page", CFPerPage)
-	params.Set("page", CFPage)
-	Url.RawQuery = params.Encode()
-	urlPath := Url.String()
-	client := &http.Client{Timeout: 10 * time.Second}
-	req, _ := http.NewRequest("GET", urlPath, nil)
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", os.Getenv("CHEEMS_CF_ACCOUNT_TOKEN")))
-	res, err := client.Do(req)
-	if err != nil {
-		log.Println(err)
-		return DeploymentsResponse{}, err
+	reqParams := make(map[string]string)
+	reqParams = map[string]string{
+		"sort_by":    "created_on",
+		"sort_order": "desc",
+		"per_page":   CFPerPage,
+		"page":       CFPage,
 	}
-	defer res.Body.Close()
-	body, _ := io.ReadAll(res.Body)
-
+	headers := make(map[string]string)
+	headers = map[string]string{"Authorization": fmt.Sprintf("Bearer %s", os.Getenv("CHEEMS_CF_ACCOUNT_TOKEN"))}
+	res, err := common.Get(_url, reqParams, "", headers)
+	if err != nil {
+		return DeploymentsResponse{}, fmt.Errorf("%w", err)
+	}
 	var r DeploymentsResponse
-	json.Unmarshal(body, &r)
+	json.Unmarshal([]byte(res), &r)
 	return r, nil
 }
 
@@ -168,10 +160,13 @@ func filterDeploymentsByCommit(r DeploymentsResponse, commitHash string, branch 
 	return f, fmt.Errorf("no result")
 }
 
-func deploymentSendTG(text string) error {
+func deploymentNotice(text string) error {
 	var n notification.Notifier
 	n.SetNotification(notification.N)
-	n.Send(text)
+	err := n.Send(text)
+	if err != nil {
+		return fmt.Errorf("deployment notice error. %w", err)
+	}
 	return nil
 }
 

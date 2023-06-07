@@ -3,7 +3,7 @@ package notification
 var N INotification
 
 type INotification interface {
-	send(string) bool
+	send(string) error
 }
 
 type Notifier struct {
@@ -14,6 +14,6 @@ func (n *Notifier) SetNotification(notification INotification) {
 	n.notification = notification
 }
 
-func (n *Notifier) Send(msg string) bool {
+func (n *Notifier) Send(msg string) error {
 	return n.notification.send(msg)
 }

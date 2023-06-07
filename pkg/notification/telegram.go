@@ -11,17 +11,17 @@ type Telegram struct {
 	ChatId string
 }
 
-func (t *Telegram) send(msg string) bool {
+func (t *Telegram) send(msg string) error {
 	url := t.url()
 	body := make(map[string]string)
 	body = map[string]string{"text": msg}
 	res, err := common.Post(url, body, "", nil)
 	if err != nil {
 		log.Printf("%+v", err)
-		return false
+		return err
 	} else {
 		log.Printf("%s", res)
-		return true
+		return nil
 	}
 }
 
