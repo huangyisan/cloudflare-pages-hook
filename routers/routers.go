@@ -63,7 +63,7 @@ func deploymentsHook(c *gin.Context) {
 	project := c.DefaultQuery("project", "")
 	commitHash := c.DefaultQuery("commitHash", "")
 	branch := c.DefaultQuery("branch", "")
-	chatID := c.DefaultQuery("chatId", "-953821079")
+	chatID := c.DefaultQuery("chatId", os.Getenv("CHEEMS_CHAT_ID"))
 	if project == "" || commitHash == "" || branch == "" {
 		response.Fail(c, gin.H{}, "should provide \"id\" and \"commitHash\" args")
 	} else {
