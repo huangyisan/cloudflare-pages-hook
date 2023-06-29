@@ -63,6 +63,7 @@ func deploymentsHook(c *gin.Context) {
 	project := c.DefaultQuery("project", "")
 	commitHash := c.DefaultQuery("commitHash", "")
 	branch := c.DefaultQuery("branch", "")
+	chatID := c.DefaultQuery("chatId", os.Getenv("CHEEMS_CHAT_ID"))
 	if project == "" || commitHash == "" || branch == "" {
 		response.Fail(c, gin.H{}, "should provide \"id\" and \"commitHash\" args")
 	} else {
@@ -111,7 +112,7 @@ func deploymentsHook(c *gin.Context) {
 				f.CommitMsg,
 				f.Status,
 			)
-			deploymentSendTG(text)
+			deploymentSendTG(text, chatID)
 			log.Printf("%v", f)
 		}(project, commitHash, branch)
 	}
@@ -168,9 +169,9 @@ func filterDeploymentsByCommit(r DeploymentsResponse, commitHash string, branch 
 	return f, fmt.Errorf("no result")
 }
 
-func deploymentSendTG(text string) error {
+func deploymentSendTG(text, chatID string) error {
 	botToken := os.Getenv("CHEEMS_BOT_TOKEN")
-	chatID := os.Getenv("CHEEMS_CHAT_ID")
+	//chatID := os.Getenv("CHEEMS_CHAT_ID")
 	err := common.SendTG(text, botToken, chatID)
 	if err != nil {
 		return err
