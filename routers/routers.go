@@ -116,7 +116,7 @@ func deploymentsHook(c *gin.Context) {
 }
 
 func makeDeploymentsRequest(project string) (DeploymentsResponse, error) {
-	_url := fmt.Sprintf("https://api.cloudflare.com/client/v4/accounts/%s/pages/projects/%s/deployments", os.Getenv("CHEEMS_CF_ACCOUNT_ID"), project)
+	_url := fmt.Sprintf("https://api.cloudflare.com/client/v4/accounts/%s/pages/projects/%s/deployments", os.Getenv("CF_ACCOUNT_ID"), project)
 	reqParams := make(map[string]string)
 	reqParams = map[string]string{
 		"sort_by":    "created_on",
@@ -125,7 +125,7 @@ func makeDeploymentsRequest(project string) (DeploymentsResponse, error) {
 		"page":       CFPage,
 	}
 	headers := make(map[string]string)
-	headers = map[string]string{"Authorization": fmt.Sprintf("Bearer %s", os.Getenv("CHEEMS_CF_ACCOUNT_TOKEN"))}
+	headers = map[string]string{"Authorization": fmt.Sprintf("Bearer %s", os.Getenv("CF_ACCOUNT_TOKEN"))}
 	res, err := common.Get(_url, reqParams, "", headers)
 	if err != nil {
 		return DeploymentsResponse{}, fmt.Errorf("%w", err)
