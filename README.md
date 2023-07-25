@@ -26,7 +26,7 @@ Remember to manage your environment variables securely and avoid sharing them pu
 | -d   | notification room id    | -123456789  |
 | -s   | wait duration           | 2m          |
 
-** Make a request**
+**Make a request**
 
 ```api
 curl "127.0.0.1:8080/deployment?project=${project_name}&commitHash=${commit_hash}&branch=${branch}"
