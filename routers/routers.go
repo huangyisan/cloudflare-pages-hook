@@ -3,6 +3,7 @@ package routers
 import (
 	"cloudflare-pages-hook/common"
 	"cloudflare-pages-hook/pkg/notification"
+	"cloudflare-pages-hook/pkg/parseConfig"
 	"cloudflare-pages-hook/response"
 	"encoding/json"
 	"fmt"
@@ -12,10 +13,16 @@ import (
 	"time"
 )
 
+//func init() {
+//	_CFScanWaitTime := flag.StringP("scan", "s", "2m", "scan wait time")
+//	CFScanWaitTime, _ = time.ParseDuration(*_CFScanWaitTime)
+//	//flag.Parse()
+//}
+
 const (
-	CFScanWaitTime = 2 * time.Minute
-	CFPerPage      = "5"
-	CFPage         = "1"
+	//CFScanWaitTime = 2 * time.Second
+	CFPerPage = "5"
+	CFPage    = "1"
 )
 
 type filterDeploymentsResponse struct {
@@ -64,22 +71,10 @@ func deploymentsHook(c *gin.Context) {
 	if project == "" || commitHash == "" || branch == "" {
 		response.Fail(c, gin.H{}, "should provide \"id\" and \"commitHash\" args")
 	} else {
-		//text := fmt.Sprintf("✈️A new build is on the fly✈️\n\n"+
-		//	"Project: *%s*\n"+
-		//	"CommitHash: *%s*\n"+
-		//	"Branch: *%s*", project, commitHash, branch)
-		//
-		//err := deploymentNotice(text)
-		//if err != nil {
-		//	log.Println(err.Error())
-		//	response.Fail(c, gin.H{}, err.Error())
-		//	return
-		//}
-
 		response.Success(c, gin.H{}, "api success")
 
 		go func(project, commitHash, branch string) {
-			time.Sleep(CFScanWaitTime)
+			time.Sleep(parseConfig.CFScanWaitTime)
 
 			r, err := makeDeploymentsRequest(project)
 			if err != nil {

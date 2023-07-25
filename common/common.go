@@ -26,7 +26,8 @@ func Post(reqUrl string, reqBody map[string]string, contentType string, headers 
 		return "", fmt.Errorf("httpClient.Do error, %w", err)
 	}
 	if res.StatusCode != 200 {
-		return "", fmt.Errorf("status code not equal 200, code is %d, %w", http.StatusNotFound, err)
+		response, _ := io.ReadAll(res.Body)
+		return "", fmt.Errorf("status code not equal 200, code is %d, %s", http.StatusNotFound, string(response))
 	}
 	defer res.Body.Close()
 	response, _ := io.ReadAll(res.Body)
@@ -56,7 +57,8 @@ func Get(reqUrl string, reqParams map[string]string, contentType string, headers
 		return "", fmt.Errorf("httpClient.Do error, %w", err)
 	}
 	if res.StatusCode != 200 {
-		return "", fmt.Errorf("status code not equal 200, code is %d, %w", http.StatusNotFound, err)
+		response, _ := io.ReadAll(res.Body)
+		return "", fmt.Errorf("status code not equal 200, code is %d, %s", http.StatusNotFound, string(response))
 	}
 	defer res.Body.Close()
 	response, _ := io.ReadAll(res.Body)

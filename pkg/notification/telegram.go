@@ -14,8 +14,8 @@ type Telegram struct {
 func (t *Telegram) send(msg string) error {
 	url := t.url()
 	body := make(map[string]string)
-	body = map[string]string{"text": msg}
-	res, err := common.Post(url, body, "", nil)
+	body["text"] = msg
+	res, err := common.Post(url, body, "application/json", nil)
 	if err != nil {
 		log.Printf("%+v", err)
 		return err
@@ -27,7 +27,7 @@ func (t *Telegram) send(msg string) error {
 
 func (t *Telegram) url() string {
 	parseMode := "markdown"
-	url := fmt.Sprintf("https://api.Telegram.org/%s/sendMessage?chat_id=%s&parse_mode=%s", t.Token, t.ChatId, parseMode)
+	url := fmt.Sprintf("https://api.Telegram.org/bot%s/sendMessage?chat_id=%s&parse_mode=%s", t.Token, t.ChatId, parseMode)
 	return url
 }
 
