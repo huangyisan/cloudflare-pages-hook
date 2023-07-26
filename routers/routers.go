@@ -13,14 +13,7 @@ import (
 	"time"
 )
 
-//func init() {
-//	_CFScanWaitTime := flag.StringP("scan", "s", "2m", "scan wait time")
-//	CFScanWaitTime, _ = time.ParseDuration(*_CFScanWaitTime)
-//	//flag.Parse()
-//}
-
 const (
-	//CFScanWaitTime = 2 * time.Second
 	CFPerPage = "5"
 	CFPage    = "1"
 )
@@ -69,7 +62,7 @@ func deploymentsHook(c *gin.Context) {
 	commitHash := c.DefaultQuery("commitHash", "")
 	branch := c.DefaultQuery("branch", "")
 	if project == "" || commitHash == "" || branch == "" {
-		response.Fail(c, gin.H{}, "should provide \"id\" and \"commitHash\" args")
+		response.Fail(c, gin.H{}, "should provide necessary args")
 	} else {
 		response.Success(c, gin.H{}, "api success")
 
