@@ -1,4 +1,4 @@
-package notification
+package notifier
 
 import (
 	"cloudflare-pages-hook/common"
@@ -8,10 +8,10 @@ import (
 
 type Telegram struct {
 	Token  string
-	ChatId string
+	chatId string
 }
 
-func (t *Telegram) send(msg string) error {
+func (t *Telegram) Send(msg string) error {
 	url := t.url()
 	body := make(map[string]string)
 	body["text"] = msg
@@ -23,17 +23,21 @@ func (t *Telegram) send(msg string) error {
 		log.Printf("%s", res)
 		return nil
 	}
+
+}
+
+func (t *Telegram) SetChatID(chatID string) {
+	t.chatId = chatID
 }
 
 func (t *Telegram) url() string {
 	parseMode := "markdown"
-	url := fmt.Sprintf("https://api.Telegram.org/bot%s/sendMessage?chat_id=%s&parse_mode=%s", t.Token, t.ChatId, parseMode)
+	url := fmt.Sprintf("https://api.Telegram.org/bot%s/sendMessage?chat_id=%s&parse_mode=%s", t.Token, t.chatId, parseMode)
 	return url
 }
 
-func InitTelegram(Token, chatId string) *Telegram {
+func InitTelegram(Token string) *Telegram {
 	return &Telegram{
-		Token:  Token,
-		ChatId: chatId,
+		Token: Token,
 	}
 }

@@ -1,0 +1,21 @@
+syntax = "v1"
+
+type (
+	notifyReq {
+		Chat_id string `path:"chat_id"`
+		Text    string `json:"text"`
+	}
+
+	notifyResp {
+		Status string `json:"status"`
+	}
+)
+
+@server (
+	prefix: /v1
+)
+
+service Notify {
+	@handler notify
+	post /notify/:chat_id (notifyReq) returns (notifyResp)
+}
